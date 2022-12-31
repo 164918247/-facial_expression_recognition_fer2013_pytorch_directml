@@ -1,0 +1,7 @@
+*.zip
+*.csv
+/image
+/FER2013
+/checkpoints
+/__pycache__
+/models/__pycache__
