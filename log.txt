@@ -1,4 +1,4 @@
-Namespace(batch_size=24, device='dml', epochs=200, learning_rate=0.03, model='resnet18', momentum=0.9, optimize_after_batches=2, path='fer2013.csv', save_model=True, weight_decay=0.0001)
+Namespace(batch_size=24, device='dml', epochs=200, learning_rate=0.03, model='resnet18', momentum=0.9, accumulation_steps=2, path='fer2013.csv', save_model=True, weight_decay=0.0001)
 Loading thedataset from: D:\Project\FacialExpression\data\fer2013.csv
 Weight List has been produced
 	Train data X [BatchSize, NCrop, C, H, W]: 

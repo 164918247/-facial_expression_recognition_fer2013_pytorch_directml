@@ -1,10 +1,11 @@
 import torch
+import itertools
 import torch.nn as nn
 import numpy as np
 import os
 import pathlib
 from os.path import exists
-import logging
+import matplotlib.pyplot as plt
 from models import *
 
 classes_mapping = {0: 'Angry', 1: 'Disgust', 2: 'Fear', 3: 'Happy', 4: 'Sad', 5: 'Surprise', 6: 'Neutral'}
@@ -42,7 +43,7 @@ def get_model(model_str, device, load_checkpoint=False):
         checkpoint = get_checkpoint_path(model_str, device)
         if (exists(checkpoint)):
             print(f'Loading checkpoint from: {checkpoint}')
-            model.load_state_dict(torch.load(checkpoint))
+            model.load_state_dict(torch.load(checkpoint)['model_state_dict'])
 
     return model
 
@@ -105,3 +106,38 @@ class LabelSmoothSoftmaxCEV1(nn.Module):
             loss = loss.sum()
 
         return loss
+
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title, fontsize=16)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+
+    plt.ylabel('True label', fontsize=18)
+    plt.xlabel('Predicted label', fontsize=18)
+    plt.tight_layout()

@@ -8,7 +8,7 @@ import utils
 import time
 
 def main(path, batch_size, epochs, learning_rate,
-         momentum, weight_decay, optimize_after_batches, device, model_str, save_model):
+         momentum, weight_decay, accumulation_steps, device, model_str, save_model):
 
     # checkpoint路径
     checkpoint = utils.get_checkpoint_path(model_str, device)
@@ -59,7 +59,7 @@ def main(path, batch_size, epochs, learning_rate,
               device,
               criterion,
               optimizer,
-              optimize_after_batches)
+              accumulation_steps)
 
         # Test
         val_accuracy = test.eval(val_dataloader,
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     parser.add_argument('--learning_rate', type=float, default=0.03, metavar='LR', help='The learning rate.')
     parser.add_argument('--momentum', type=float, default=0.9, metavar='M', help='The percentage of past parameters to store.')
     parser.add_argument('--weight_decay', default=0.0001, type=float, help='The parameter to decay weights.')
-    parser.add_argument('--optimize_after_batches', default=16, type=int, help='After how many batches do optimize.')
+    parser.add_argument('--accumulation_steps', default=16, type=int, help='After how many batches do optimize.')
     parser.add_argument('--device', type=str, default='dml', help='The device to use for training.')
     parser.add_argument('--model', type=str, default='resnet18', help='The model to use.')
     parser.add_argument('--save_model', action='store_true', help='save model state_dict to file')
@@ -117,4 +117,4 @@ if __name__ == "__main__":
 
     print (args)
     main(args.path, args.batch_size, args.epochs, args.learning_rate,
-         args.momentum, args.weight_decay, args.optimize_after_batches, args.device, args.model, args.save_model)
+         args.momentum, args.weight_decay, args.accumulation_steps, args.device, args.model, args.save_model)

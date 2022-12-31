@@ -3,7 +3,7 @@ import time
 import utils
 from models import *
 
-def train(dataloader, model, device, criterion, optimizer, optimize_after_batches):
+def train(dataloader, model, device, criterion, optimizer, accumulation_steps):
     # 切换到训练模式
     model.train()
 
@@ -43,7 +43,7 @@ def train(dataloader, model, device, criterion, optimizer, optimize_after_batche
         # 计算损失
         batch_loss = l_list * criterion(output, y_a) + (1 - l_list) * criterion(output, y_b)
         batch_loss = batch_loss.mean()
-        batch_loss = batch_loss / optimize_after_batches
+        batch_loss = batch_loss / accumulation_steps
 
         # 反向传播
         batch_loss.backward()
@@ -59,7 +59,7 @@ def train(dataloader, model, device, criterion, optimizer, optimize_after_batche
         correct += (l_list * correct_a + (1 - l_list) * correct_b).mean().item()
         
         # 多个 batch 更新一次参数
-        if batch % optimize_after_batches == 0:
+        if batch % accumulation_steps == 0:
             optimizer.step()
             optimizer.zero_grad()
         
